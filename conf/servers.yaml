@@ -1,0 +1,140 @@
+config:
+
+    verbose: True
+    debug: False
+
+    domain: Chimata-No-Kami.midokura.de
+
+    #
+    # used for the ips of the containers in midonet overlay
+    #
+    overlay: 10/8
+
+    #
+    # used for the ips of the veth pairs in the varnish nodes (the distributed virtual edge)
+    #
+    edge: 172.16/12
+
+roles:
+    zookeeper:
+    - s001
+    - s002
+    - s003
+
+    cassandra:
+    - s001
+    - s002
+    - s003
+
+    midonet_api:
+    - s004
+
+    midonet_manager:
+    - s004
+
+    midonet_cli:
+    - s004
+
+    haproxy:
+    - s005
+    - s006
+    - s007
+
+    varnish:
+    - s008
+    - s009
+    - s010
+    - s011
+
+#
+# this will be nginx containers running in the servers
+#
+# the ip namespace of the containers in the servers will be a /20 for each server,
+# leaving the option of running 4096 containers per box
+#
+applications:
+    nginx:
+        s012:
+        - c001
+        - c002
+        - c003
+        - c004
+        s013:
+        - c001
+        - c002
+        - c003
+        - c004
+        s014:
+        - c001
+        - c002
+        - c003
+        - c004
+        s015:
+        - c001
+        - c002
+        - c003
+        - c004
+        s016:
+        - c001
+        - c002
+        - c003
+        - c004
+        s017:
+        - c001
+        - c002
+        - c003
+        - c004
+
+servers:
+
+    s001:
+        ip: 192.168.4.201
+
+    s002:
+        ip: 192.168.4.202
+
+    s003:
+        ip: 192.168.4.203
+
+    s004:
+        ip: 192.168.4.204
+
+    s005:
+        ip: 192.168.4.205
+
+    s006:
+        ip: 192.168.4.206
+
+    s007:
+        ip: 192.168.4.207
+
+    s008:
+        ip: 192.168.4.208
+
+    s009:
+        ip: 192.168.4.209
+
+    s010:
+        ip: 192.168.4.210
+
+    s011:
+        ip: 192.168.4.211
+
+    s012:
+        ip: 192.168.4.212
+
+    s013:
+        ip: 192.168.4.213
+
+    s014:
+        ip: 192.168.4.214
+
+    s015:
+        ip: 192.168.4.215
+
+    s016:
+        ip: 192.168.4.216
+
+    s017:
+        ip: 192.168.4.217
+
