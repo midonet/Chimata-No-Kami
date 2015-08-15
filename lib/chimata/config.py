@@ -136,7 +136,7 @@ class Config(object):
         # each server will create its own sshconfig fragment as a local file in tmp,
         # afterwards a cat will unite these to a .ssh/config in tmp
         #
-        for role in ['install', 'all_servers', 'sshconfig', 'prune']:
+        for role in ['install', 'all_servers', 'sshconfig', 'prune', 'distclean']:
             self.__check__add_empty_role(role)
 
             for server in sorted(self._servers):

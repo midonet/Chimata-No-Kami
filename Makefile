@@ -118,3 +118,6 @@ applications: $(PREREQUISITES) midonet_agents midonet_api tunnelzone bridge rout
 prune: sshconfig
 	$(RUNSTAGE)
 
+distclean: sshconfig
+	$(RUNSTAGE)
+
