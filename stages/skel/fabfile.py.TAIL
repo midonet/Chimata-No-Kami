@@ -6,7 +6,9 @@
 #
     puts(green("finishing role %%ROLE%% on %s" % env.host_string))
 
-    chimata_lockfile = "/tmp/.%s__%s.%s__%s__lck" % ("%%ROLE%%", env.host_string, metadata.config["domain"], sys._getframe().f_code.co_name)
-
-    cuisine.file_write(chimata_lockfile, "OK")
+    #
+    # do not write a lockfile for prune and distclean jobs
+    #
+    if sys._getframe().f_code.co_name not in ["prune", "distclean"]:
+        cuisine.file_write(chimata_lockfile, "OK")
 
