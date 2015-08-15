@@ -104,7 +104,9 @@ class Config(object):
         defaults['container_density'] = 4096
         defaults['container_ip_offset'] = 10
 
-        defaults['no_lock_check'] = ["prune", "distclean"]
+        defaults['no_lock_check'] = ['prune', 'distclean', 'reboot']
+
+        defaults['basic_roles'] = ['all_servers', 'sshconfig', 'install', 'prune', 'distclean', 'reboot']
 
         return defaults
 
@@ -138,7 +140,7 @@ class Config(object):
         # each server will create its own sshconfig fragment as a local file in tmp,
         # afterwards a cat will unite these to a .ssh/config in tmp
         #
-        for role in ['install', 'all_servers', 'sshconfig', 'prune', 'distclean']:
+        for role in self._config['basic_roles']:
             self.__check__add_empty_role(role)
 
             for server in sorted(self._servers):

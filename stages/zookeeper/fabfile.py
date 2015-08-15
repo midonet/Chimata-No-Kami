@@ -1,6 +1,17 @@
 
     puts(green("installing zookeeper on %s" % env.host_string))
 
+    run("""
+
+service zookeeper stop || echo
+
+rm -rf /etc/zookeeper || echo
+rm -rf /var/lib/zookeeper || echo
+
+apt-get -y --purge remove zookeeper </dev/null || echo
+
+""")
+
     zk = []
 
     zkid = 1
@@ -23,6 +34,7 @@
     args['server_id'] = "%s" % myid
 
     run("""
+
 mkdir -pv /etc/zookeeper
 
 ln -sf /etc/zookeeper /etc/zookeeper/conf
@@ -45,10 +57,9 @@ ZOOMAIN="org.apache.zookeeper.server.quorum.QuorumPeerMain"
 ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
 JMXLOCALONLY=false
 JAVA_OPTS=""
-
 EOF
 
-chown -R zookeeper:zookeeper /etc/zookeeper
+chown -R zookeeper:zookeeper /etc/zookeeper || true
 
 """)
 

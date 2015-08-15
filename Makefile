@@ -121,3 +121,6 @@ prune: $(PREREQUISITES)
 distclean: $(PREREQUISITES)
 	$(RUNSTAGE)
 
+reboot: $(PREREQUISITES)
+	$(RUNSTAGE)
+
