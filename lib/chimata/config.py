@@ -104,9 +104,12 @@ class Config(object):
         defaults['container_density'] = 4096
         defaults['container_ip_offset'] = 10
 
-        defaults['no_lock_check'] = ['prune', 'distclean', 'reboot']
+        defaults['basic_roles'] = ['all_servers', 'sshconfig', 'install']
 
-        defaults['basic_roles'] = ['all_servers', 'sshconfig', 'install', 'prune', 'distclean', 'reboot']
+        defaults['no_lock_check'] = ['prune', 'distclean', 'reboot', 'uptime']
+
+        for role in defaults['no_lock_check']:
+            defaults['basic_roles'].append(role)
 
         return defaults
 

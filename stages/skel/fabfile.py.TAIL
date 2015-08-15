@@ -13,7 +13,11 @@
     # do not write a lockfile for prune and distclean jobs
     #
     if sys._getframe().f_code.co_name not in metadata.config["no_lock_check"]:
-        puts(green("finishing role %%ROLE%% on %s" % env.host_string))
+        puts(green("finishing remote task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
 
         cuisine.file_write(chimata_lockfile, "OK")
+
+#   #
+#   # END OF EPILOGUE
+#   #
 

@@ -61,10 +61,19 @@ def %%ROLE%%():
         # if the lockfile exists we must not run this method again
         #
         if cuisine.file_exists(chimata_lockfile):
-            puts(yellow("skipping role %s on %s (lockfile exists)" % (sys._getframe().f_code.co_name, env.host_string)))
+            if metadata.config['verbose'] == True:
+                puts(yellow("skipping task %s on %s (lockfile exists)" % (sys._getframe().f_code.co_name, env.host_string)))
+
             return
     else:
-        puts(yellow("not checking lockfile for role %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
+        if metadata.config['debug'] == True:
+            puts(yellow("not checking lockfile for task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
 
-    puts(green("running role %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
+    puts(green("********************************************************************************"))
+    puts(green("running remote task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
+    puts(green("********************************************************************************"))
+
+#   #
+#   #   END OF PROLOGUE
+#   #
 
