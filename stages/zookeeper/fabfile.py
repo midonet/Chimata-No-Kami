@@ -22,6 +22,36 @@
     args['servers'] = "[%s]" % ",".join(zk)
     args['server_id'] = "%s" % myid
 
+    run("""
+mkdir -pv /etc/zookeeper
+
+ln -sf /etc/zookeeper /etc/zookeeper/conf
+
+cat >/etc/zookeeper/conf/environment <<EOF
+NAME=zookeeper
+ZOOCFGDIR=/etc/zookeeper/conf
+
+CLASSPATH="/etc/zookeeper/conf:/usr/share/java/jline.jar:/usr/share/java/log4j-1.2.jar:/usr/share/java/xercesImpl.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/netty.jar:/usr/share/java/slf4j-api.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/zookeeper.jar"
+
+ZOOCFG="/etc/zookeeper/conf/zoo.cfg"
+ZOO_LOG_DIR=/var/log/zookeeper
+USER=zookeeper
+GROUP=zookeeper
+PIDDIR=/var/run/zookeeper
+PIDFILE=/var/run/zookeeper/zookeeper.pid
+SCRIPTNAME=/etc/init.d/zookeeper
+JAVA=/usr/bin/java
+ZOOMAIN="org.apache.zookeeper.server.quorum.QuorumPeerMain"
+ZOO_LOG4J_PROP="INFO,ROLLINGFILE"
+JMXLOCALONLY=false
+JAVA_OPTS=""
+
+EOF
+
+chown -R zookeeper:zookeeper /etc/zookeeper
+
+""")
+
     Puppet.apply('midonet::zookeeper', args, metadata)
 
     Daemon.poll('org.apache.zookeeper.server.quorum', 60)

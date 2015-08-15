@@ -96,6 +96,77 @@ EOF
         metadata.servers[env.host_string]['ip']
     ))
 
+    for role in metadata.roles:
+        if env.host_string in metadata.roles[role]:
+            local("""
+TMPDIR="%s"
+HOSTNAME="%s"
+DOMAIN="%s"
+ROLE="%s"
+IP="%s"
+
+cat >>"${TMPDIR}/.ssh/.config.fragment.${HOSTNAME}.txt" <<EOF
+#
+# ssh config for role ${ROLE} on server ${HOSTNAME} (${IP})
+#
+Host ${HOSTNAME}_${ROLE}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+Host ${HOSTNAME}.${DOMAIN}_${ROLE}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+Host ${ROLE}_${HOSTNAME}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+Host ${ROLE}_${HOSTNAME}.${DOMAIN}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+Host ${ROLE}.${HOSTNAME}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+Host ${ROLE}.${HOSTNAME}.${DOMAIN}
+    User root
+    ServerAliveInterval 2
+    KeepAlive yes
+    ConnectTimeout 30
+    TCPKeepAlive yes
+    Hostname ${IP}
+
+EOF
+
+""" % (
+        os.environ["TMPDIR"],
+        env.host_string,
+        metadata.config['domain'],
+        role,
+        metadata.servers[env.host_string]['ip']
+    ))
+
     #
     # application containers via midonet gateways
     #
@@ -136,7 +207,7 @@ Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}_via_${GATEWAY_IP}
     KeepAlive yes
     ConnectTimeout 30
     TCPKeepAlive yes
-    ProxyCommand /usr/bin/ssh -F${TMPDIR}.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
+    ProxyCommand /usr/bin/ssh -F${TMPDIR}/.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
 
 Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}.${DOMAIN}_via_${GATEWAY_IP}
     User root
@@ -144,7 +215,7 @@ Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}.${DOMAIN}_via_${GATEWAY_IP}
     KeepAlive yes
     ConnectTimeout 30
     TCPKeepAlive yes
-    ProxyCommand /usr/bin/ssh -F${TMPDIR}.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
+    ProxyCommand /usr/bin/ssh -F${TMPDIR}/.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
 
 EOF
 
@@ -185,7 +256,7 @@ Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}
     KeepAlive yes
     ConnectTimeout 30
     TCPKeepAlive yes
-    ProxyCommand /usr/bin/ssh -F${TMPDIR}.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
+    ProxyCommand /usr/bin/ssh -F${TMPDIR}/.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
 
 Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}.${DOMAIN}
     User root
@@ -193,7 +264,7 @@ Host ${HOSTNAME}_${APPLICATION}_${CONTAINER}.${DOMAIN}
     KeepAlive yes
     ConnectTimeout 30
     TCPKeepAlive yes
-    ProxyCommand /usr/bin/ssh -F${TMPDIR}.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
+    ProxyCommand /usr/bin/ssh -F${TMPDIR}/.ssh/config -W${CONTAINER_IP}:22 root@${GATEWAY_IP}
 
 EOF
 

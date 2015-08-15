@@ -4,7 +4,7 @@
     zk = []
 
     for zkhost in metadata.roles['zookeeper']:
-        zk.append("{'ip' => '%s', 'port' => '2181'}" % metadata.servers[zkhost]['internal_ip'])
+        zk.append("{'ip' => '%s', 'port' => '2181'}" % metadata.servers[zkhost]['ip'])
 
     args = {}
 
