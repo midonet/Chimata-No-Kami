@@ -62,7 +62,7 @@ EOF
 
     idx = 0
 
-    for server in metadata.servers:
+    for server in sorted(metadata.servers):
         if server in metadata.roles['varnish']:
             idx = idx + 1
 
