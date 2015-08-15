@@ -115,9 +115,9 @@ varnish: $(PREREQUISITES) midonet_gateways
 applications: $(PREREQUISITES) midonet_agents midonet_api tunnelzone bridge router midonet_gateways haproxy varnish
 	$(RUNSTAGE)
 
-prune: sshconfig
+prune: $(PREREQUISITES)
 	$(RUNSTAGE)
 
-distclean: sshconfig
+distclean: $(PREREQUISITES)
 	$(RUNSTAGE)
 
