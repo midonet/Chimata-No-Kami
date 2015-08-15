@@ -13,5 +13,5 @@
 
     Puppet.apply('midonet::cassandra', args, metadata)
 
-    Daemon.poll('org.apache.cassandra.service.CassandraDaemon')
+    Daemon.poll('org.apache.cassandra.service.CassandraDaemon', 120)
 

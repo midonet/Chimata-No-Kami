@@ -104,6 +104,8 @@ class Config(object):
         defaults['container_density'] = 4096
         defaults['container_ip_offset'] = 10
 
+        defaults['no_lock_check'] = ["prune", "distclean"]
+
         return defaults
 
     def __overload_config(self, defaults):
