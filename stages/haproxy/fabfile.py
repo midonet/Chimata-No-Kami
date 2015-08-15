@@ -79,3 +79,10 @@ EOF
 
 """ % (metadata.servers[server]['ip'], idx))
 
+    run("""
+
+service haproxy restart
+
+ps axufwwww | grep -v grep | grep haproxy
+
+""")
