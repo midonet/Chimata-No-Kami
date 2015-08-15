@@ -70,6 +70,21 @@ chown -R zookeeper:zookeeper /etc/zookeeper || true
     for zkhost in sorted(metadata.roles['zookeeper']):
         run("""
 IP="%s"
-echo ruok | nc "${IP}" 2181 | grep imok
+
+for i in $(seq 1 60); do
+    echo ruok | nc "${IP}" 2181 | grep imok && exit 0
+    sleep 1
+done
+
+exit 1
+
+""" % metadata.servers[zkhost]['ip'])
+
+    for zkhost in sorted(metadata.roles['zookeeper']):
+        run("""
+IP="%s"
+
+echo status | nc "${IP}" 2181
+
 """ % metadata.servers[zkhost]['ip'])
 

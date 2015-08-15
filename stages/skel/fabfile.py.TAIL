@@ -4,11 +4,16 @@
 #
 # do not modify it, all changes will be overwritten!
 #
-    puts(green("finishing role %%ROLE%% on %s" % env.host_string))
+
+#   #
+#   # EPILOGUE
+#   #
 
     #
     # do not write a lockfile for prune and distclean jobs
     #
-    if sys._getframe().f_code.co_name not in ["prune", "distclean"]:
+    if sys._getframe().f_code.co_name not in metadata.config["no_lock_check"]:
+        puts(green("finishing role %%ROLE%% on %s" % env.host_string))
+
         cuisine.file_write(chimata_lockfile, "OK")
 
