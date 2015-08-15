@@ -54,20 +54,26 @@ def %%ROLE%%():
 #   #
 
     #
-    # only check the lockfile for jobs that allow it
+    # if NODEPS is active dont poll the lock
     #
-    if sys._getframe().f_code.co_name not in metadata.config["no_lock_check"]:
-        #
-        # if the lockfile exists we must not run this method again
-        #
-        if cuisine.file_exists(chimata_lockfile):
-            if metadata.config['verbose'] == True:
-                puts(yellow("skipping task %s on %s (lockfile exists)" % (sys._getframe().f_code.co_name, env.host_string)))
+    if not "NODEPS" in os.environ:
 
-            return
-    else:
-        if metadata.config['debug'] == True:
-            puts(yellow("not checking lockfile for task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
+        #
+        # only check the lockfile for jobs that allow it
+        #
+        if sys._getframe().f_code.co_name not in metadata.config["no_lock_check"]:
+
+            #
+            # if the lockfile exists we must not run this method again
+            #
+            if cuisine.file_exists(chimata_lockfile):
+                if metadata.config['verbose'] == True:
+                    puts(yellow("skipping task %s on %s (lockfile exists)" % (sys._getframe().f_code.co_name, env.host_string)))
+
+                return
+        else:
+            if metadata.config['debug'] == True:
+                puts(yellow("not checking lockfile for task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
 
     puts(green("********************************************************************************"))
     puts(green("running remote task %s on %s" % (sys._getframe().f_code.co_name, env.host_string)))
