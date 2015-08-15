@@ -81,14 +81,14 @@ class Puppet(object):
             if "OS_MIDOKURA_REPOSITORY_USER" in os.environ:
                 xapt = 'http://%s:%s@apt.midokura.com' % (os.environ["OS_MIDOKURA_REPOSITORY_USER"], os.environ["OS_MIDOKURA_REPOSITORY_PASS"])
                 xargs['midonet_stage'] = "'trusty'"
-                xargs['openstack_release'] = "'juno'"
+                xargs['openstack_release'] = "'kilo'"
                 xargs['midonet_repo'] = "'%s/midonet/v1.9/stable'" % xapt
-                xargs['midonet_openstack_repo'] = "'%s/openstack/juno/stable'" % xapt
+                xargs['midonet_openstack_repo'] = "'%s/openstack/kilo/stable'" % xapt
             else:
                 xapt = 'http://repo.midonet.org'
                 xargs['midonet_stage'] = "'stable'"
-                xargs['openstack_release'] = "'juno'"
-                xargs['midonet_repo'] = "'%s/midonet/v2014.11'" % xapt
+                xargs['openstack_release'] = "'kilo'"
+                xargs['midonet_repo'] = "'%s/midonet/v2015.06'" % xapt
                 xargs['midonet_openstack_repo'] = "'%s/openstack'" % xapt
                 xargs['midonet_thirdparty_repo'] = "'%s/misc'" % xapt
                 xargs['midonet_key'] = "'50F18FCF'"
