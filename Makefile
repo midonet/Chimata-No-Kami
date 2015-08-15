@@ -108,7 +108,7 @@ haproxy: $(PREREQUISITES) $(HAPROXY_DEPS)
 #
 # set up the http caches
 #
-varnish: $(PREREQUISITES) $(VARNISH_DEPS)s
+varnish: $(PREREQUISITES) $(VARNISH_DEPS)
 	$(RUNSTAGE)
 
 #

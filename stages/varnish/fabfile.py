@@ -14,7 +14,7 @@
                 for container in sorted(metadata.servers[env.host_string]['applications'][application]):
                     container_ip = metadata.servers[env.host_string]['applications'][application][container]['ip']
 
-                    puts(yellow("adding varnish backend %s/%s/%s (%s)" % (server, application, container, container_ip)))
+                    puts(red("adding varnish backend %s/%s/%s (%s)" % (server, application, container, container_ip)))
 
                     director_backends.append("{ .backend = %s_%s_%s; .weight = 10; } " % (server, application, container))
 
