@@ -54,3 +54,4 @@ sshconfig: preflight
 clean:
 	rm -rf ./$(shell basename $(TMPDIR))
 	find . -type f -ipath '*.pyc' | xargs -n1 --no-run-if-empty -- rm -v
+	ls stages/*/fabfile.py | xargs -n1 --no-run-if-empty -- rm -v
