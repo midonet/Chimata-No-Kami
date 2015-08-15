@@ -126,9 +126,9 @@ class Config(object):
     def __prepare_roles(self):
 
         #
-        # midonet_cli server will create the bridge and router
+        # midonet_cli server will create the tunnel-zone, bridge and router
         #
-        for role in ['bridge', 'router']:
+        for role in ['tunnelzone', 'bridge', 'router']:
             self.__check__add_empty_role(role)
 
             for server in sorted(self._servers):
@@ -150,7 +150,7 @@ class Config(object):
         #
         # varnish nodes will be configured as midonet_gateways, run the agent and will be in the tunnelzone
         #
-        for role in ['midonet_gateways', 'midonet_agents', 'tunnelzone']:
+        for role in ['midonet_gateways', 'midonet_agents']:
             self.__check__add_empty_role(role)
 
             for server in sorted(self._servers):
