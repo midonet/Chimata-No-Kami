@@ -38,7 +38,7 @@ defaults
 EOF
 """)
 
-        run("""
+    run("""
 TYPE="http"
 PORT="80"
 
