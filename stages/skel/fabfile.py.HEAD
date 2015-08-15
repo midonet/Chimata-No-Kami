@@ -25,11 +25,15 @@
 
 import os
 
+import sys
+
 from chimata.config import Config
 
 from fabric.api import env,parallel,roles,run,local
 from fabric.colors import red,yellow,green
 from fabric.utils import puts
+
+import cuisine
 
 metadata = Config(os.environ["CONFIGFILE"])
 
@@ -40,5 +44,12 @@ metadata = Config(os.environ["CONFIGFILE"])
 #
 @roles('%%ROLE%%')
 def %%ROLE%%():
+
+    __chimata_lockfile = "/tmp/.%s__%s.%s__%s__lck" % ("%%ROLE%%", env.host_string, metadata.config["domain"], sys._getframe().f_code.co_name)
+
+    if cuisine.file_exists(__chimata_lockfile):
+        if "%%ROLE%%" not in ["prune", "distclean"]:
+            return
+
     puts(green("running role %%ROLE%% on %s" % env.host_string))
 

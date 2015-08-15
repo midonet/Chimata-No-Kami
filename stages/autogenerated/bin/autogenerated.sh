@@ -27,7 +27,19 @@ do
     #
     # code generator head
     #
-    cat "${SKEL}.HEAD" >"${AUTOGEN}"
+    cat "${SKEL}.HEAD" >"${AUTOGEN}.HEAD"
+
+    #
+    # apply macros in code template
+    #
+    sed -i 's,%%GENERATOR%%,'"${0}"',g;' "${AUTOGEN}.HEAD"
+    sed -i 's,%%ROLE%%,'"${STAGE}"',g;' "${AUTOGEN}.HEAD"
+
+    if [[ ! "sshconfig" == "${STAGE}" ]]; then
+        cat "${AUTOGEN}.HEAD" >"${AUTOGEN}"
+    fi
+
+    rm "${AUTOGEN}.HEAD"
 
     #
     # insert hand written fragment code if it exists
@@ -55,13 +67,19 @@ EOF
     #
     # code generator tail
     #
-    cat "${SKEL}.TAIL" >>"${AUTOGEN}"
+    cat "${SKEL}.TAIL" >>"${AUTOGEN}.TAIL"
 
     #
     # apply macros in code template
     #
-    sed -i 's,%%GENERATOR%%,'"${0}"',g;' "${AUTOGEN}"
-    sed -i 's,%%ROLE%%,'"${STAGE}"',g;' "${AUTOGEN}"
+    sed -i 's,%%GENERATOR%%,'"${0}"',g;' "${AUTOGEN}.TAIL"
+    sed -i 's,%%ROLE%%,'"${STAGE}"',g;' "${AUTOGEN}.TAIL"
+
+    if [[ ! "sshconfig" == "${STAGE}" ]]; then
+        cat "${AUTOGEN}.TAIL" >> "${AUTOGEN}"
+    fi
+
+    rm "${AUTOGEN}.TAIL"
 
     chmod 0755 "${AUTOGEN}"
 done

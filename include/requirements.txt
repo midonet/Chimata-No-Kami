@@ -2,3 +2,4 @@ ConfigParser
 Fabric
 ecdsa
 pycrypto
+cuisine<=0.7.5

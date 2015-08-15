@@ -24,6 +24,11 @@ import yaml
 
 from fabric.api import *
 
+from fabric.colors import red,yellow,green
+from fabric.utils import puts
+
+from netaddr import IPNetwork as CIDR
+
 class Config(object):
 
     def __init__(self, configfile):
@@ -61,14 +66,6 @@ class Config(object):
                     sys.stderr.write("server role: %s\n" % role)
             sys.stderr.write("\n")
 
-        #for application in self._applications:
-        #    for server in self._applications[application]:
-        #        for container in self._applications[application][server]:
-        #            ip = self._applications[application][server][container]['ip']
-        #
-        #            sys.stderr.write("__dumpconfig application: server %s - container %s - ip %s" %
-        #                (server, container, ip))
-
     @classmethod
     def __read_from_yaml(cls, yamlfile, section_name):
         with open(yamlfile, 'r') as yaml_file:
@@ -103,6 +100,9 @@ class Config(object):
 
         defaults["underlay_mtu"] = 1500
         defaults["overlay_mtu"] = 1450
+
+        defaults['container_density'] = 4096
+        defaults['container_ip_offset'] = 10
 
         return defaults
 
@@ -166,23 +166,40 @@ class Config(object):
                         self._roles[role].append(server)
 
     #
-    # assigns the ip addresses from the containers based on idx of server
+    # assigns the ip addresses from the containers based on idx of server and application
     #
     def __prepare_applications(self):
-        for application in self._applications:
-            for server in self._applications[application]:
-                server_idx = int(re.sub(r"\D", "", server))
+        application_idx = 0
 
-                # TODO **
+        for application in sorted(self._applications):
+            application_ip_offset = len(self._servers) * self._config['container_density'] * application_idx
+            application_idx = application_idx + 1
 
-                for container in self._applications[application][server]:
-                    container_idx = int(re.sub(r"\D", "", container))
+            for server in sorted(self._applications[application]):
+                self._servers[server]['applications'] = {}
+                self._servers[server]['applications'][application] = {}
 
-                    #self._applications[application][server][container] = {}
+                #
+                # this is the ipv4 base network for this server
+                #
+                server_idx = int(re.sub(r"\D", "", server)) * self._config['container_density'] + self._config['container_ip_offset'] + application_ip_offset
 
-                    #self._applications[application][server][container]['ip'] = '10.99.99.99'
+                for container in sorted(self._applications[application][server]):
+                    self._servers[server]['applications'][application][container] = {}
 
-                    # TODO **
+                    #
+                    # this will be used to determine the ip address of the container
+                    #
+                    container_idx = int(re.sub(r"\D", "", container)) + server_idx
+
+                    #
+                    # This python CIDR class allows us to walk the ip namespace by array index
+                    #
+                    container_ip = CIDR(self._config['overlay'])[container_idx]
+
+                    # puts(yellow("setting container ip %s for container %s, application %s on server %s" % (container_ip, container, application, server)))
+
+                    self._servers[server]['applications'][application][container]['ip'] = container_ip
 
     def __prepare_servers(self):
         for role in self._roles:
