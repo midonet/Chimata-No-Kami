@@ -95,6 +95,12 @@ class Config(object):
     def __defaults(self):
         defaults = {}
 
+        #
+        # at the moment we support random and round-robin in the script stages/varnish/fabfile.py
+        #
+        defaults["varnish_director_policy"] = "round-robin"
+        defaults["varnish_backend_probe_url"] = "/"
+
         defaults["nameserver"] = "8.8.8.8"
         defaults["parallel"] = True
 

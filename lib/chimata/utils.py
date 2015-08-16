@@ -103,7 +103,9 @@ class Puppet(object):
 DEBUG="%s"
 VERBOSE="%s"
 
-echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+NAMESERVER="%s"
+
+echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
 yes | dpkg --configure -a
 
 cat >/tmp/node.pp<<EOF
@@ -120,5 +122,12 @@ EOF
 
 puppet apply ${DEBUG} ${VERBOSE} /tmp/node.pp 2>&1
 
-""" % (debug_flag, verbose_flag, ",".join(repo_args), module_name, args_string))
+""" % (
+        debug_flag,
+        verbose_flag,
+        metadata.config["nameserver"],
+        ",".join(repo_args),
+        module_name,
+        args_string
+    ))
 

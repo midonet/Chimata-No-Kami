@@ -4,12 +4,14 @@
     # prepare the box
     #
     run("""
+NAMESERVER="%s"
+
 DOMAIN="%s"
 HOST="%s"
 
 UNDERLAY_MTU="%s"
 
-echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
 
 yes | dpkg --configure -a
 yes | apt-get update 1>/dev/null
@@ -53,7 +55,12 @@ ip link set dev eth1 mtu ${UNDERLAY_MTU} || echo
 
 exit 0
 
-""" % (metadata.config["domain"], env.host_string, metadata.config["underlay_mtu"]))
+""" % (
+        metadata.config["nameserver"],
+        metadata.config["domain"],
+        env.host_string,
+        metadata.config["underlay_mtu"]
+    ))
 
     #
     # MEM
