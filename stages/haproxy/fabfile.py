@@ -74,7 +74,7 @@ TYPE="http"
 PORT="80"
 
 cat >>/etc/haproxy/haproxy.cfg<<EOF
-    server ${TYPE}_${PORT}_server${IDX} ${SERVER_IP}:${PORT} check
+    server ${TYPE}_${PORT}_server${IDX} ${SERVER_IP}:6081 check
 EOF
 
 """ % (metadata.servers[server]['ip'], idx))
