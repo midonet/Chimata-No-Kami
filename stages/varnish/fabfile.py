@@ -87,6 +87,20 @@ director %s_%s random {
 
     cuisine.file_append("/etc/varnish/default.vcl", director)
 
+    #
+    # https://www.varnish-cache.org/trac/wiki/VCLExampleDirector
+    #
+    cuisine.file_append("/etc/varnish/default.vcl", """
+
+#
+# use the application director for all incoming traffic
+#
+
+sub vcl_recv {
+    set req.backend = %s_%s;
+}
+""" % (env.host_string, application))
+
     run("""
 
 service varnish restart
