@@ -8,6 +8,8 @@ rm -vf /tmp/.chimata_lockfile__*
 
 apt-get -y --purge remove midolman </dev/null
 
+apt-get -y --purge remove midonet-api </dev/null
+
 rm -rf /etc/midolman
 rm -rf /var/log/midolman
 
