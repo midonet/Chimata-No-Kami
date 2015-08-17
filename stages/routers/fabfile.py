@@ -100,6 +100,47 @@ echo
     downlink
     ))
 
+        #
+        # routing for the micro-segment bridges of the docker containers
+        #
+        for server in sorted(metadata.servers):
+            if "applications" in metadata.servers[server]:
+                for application in sorted(metadata.servers[server]['applications']):
+                    for container in sorted(metadata.servers[server]['applications'][application]):
+                        container_network = metadata.servers[server]['applications'][application][container]['network']
+
+                        #
+                        # route this network through this application router
+                        #
+                        run("""
+ROUTER_IP="%s"
+NETWORK="%s"
+GW_IP="%s"
+DESTINATION_NETWORK="%s"
+
+/usr/bin/expect<<EOF 1>/dev/null 2>/dev/null
+set timeout 10
+spawn midonet-cli
+expect "midonet> " { send "cleart\r" }
+expect "midonet> " { send "router list name router_edge\r" }
+expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${DESTINATION_NETWORK}/30 type normal weight 100 port router0:port0 gw ${GW_IP}\r" }
+expect "midonet> " { send "quit\r" }
+EOF
+
+echo
+
+""" % (
+        CIDR(edge_network)[1],
+        CIDR(edge_network)[0],
+        downlink,
+        container_network
+    ))
+
+    #
+    # wire the application routers to the bridges
+    #
+
     for server in sorted(metadata.servers):
         if "applications" in metadata.servers[server]:
             for application in sorted(metadata.servers[server]['applications']):
@@ -150,6 +191,7 @@ spawn midonet-cli
 expect "midonet> " { send "cleart\r" }
 expect "midonet> " { send "router list name ${ROUTER}\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/30\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${NETWORK}/30 type normal weight 100 port router0:port0\r" }
 expect "midonet> " { send "bridge list name ${BRIDGE}\r" }
 expect "midonet> " { send "bridge bridge0 port create\r" }
 expect "midonet> " { send "router router0 port port0 set peer bridge0:port0\r" }
