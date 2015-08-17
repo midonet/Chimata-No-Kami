@@ -96,6 +96,11 @@ class Config(object):
         defaults = {}
 
         #
+        # do not change this
+        #
+        defaults["edge_network"] = "192.168.254.0/24"
+
+        #
         # at the moment we support random and round-robin in the script stages/varnish/fabfile.py
         #
         defaults["varnish_director_policy"] = "round-robin"

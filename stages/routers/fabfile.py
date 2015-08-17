@@ -3,8 +3,11 @@
 
     puts(green("configuring midonet virtual router (using cli on %s)" % env.host_string))
 
-    edge_network = "192.168.254.0/24"
+    edge_network = metadata.config["edge_network"]
 
+    #
+    # edge router. this is what we usually know as the MidoNet Provider Router
+    #
     run("""
 
 ROUTER_IP="%s"
@@ -57,6 +60,8 @@ EOF
 
         downlink = CIDR(edge_network)[idx]
 
+        uplink = CIDR(edge_network)[1]
+
         run("""
 
 ROUTER="router_%s"
@@ -64,6 +69,8 @@ ROUTER="router_%s"
 NETWORK="%s"
 
 ROUTER_IP="%s"
+
+GW_IP="%s"
 
 #
 # create the application router
@@ -84,11 +91,15 @@ midonet-cli -e "router ${ROUTER_ID} port list" | grep "address ${ROUTER_IP} net 
 set timeout 10
 spawn midonet-cli
 expect "midonet> " { send "cleart\r" }
+
 expect "midonet> " { send "router list name ${ROUTER}\r" }
+expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst 0.0.0.0/0 type normal weight 100 port router0:port0 gw ${GW_IP}\r" }
+
 expect "midonet> " { send "bridge list name bridge_edge\r" }
 expect "midonet> " { send "bridge bridge0 port create\r" }
-expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
 expect "midonet> " { send "router router0 port port0 set peer bridge0:port0\r" }
+
 expect "midonet> " { send "quit\r" }
 EOF
 
@@ -97,7 +108,8 @@ echo
 """ % (
     application,
     network,
-    downlink
+    downlink,
+    uplink
     ))
 
         #
