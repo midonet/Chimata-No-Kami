@@ -67,7 +67,7 @@ expect "midonet> " { send "cleart\r" }
 
 expect "midonet> " { send "router list name router_edge\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/30\r" }
-expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${GW_IP}/32 type normal weight 10 port router0:port0\r" }
+# TODO expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${GW_IP}/32 type normal weight 10 port router0:port0\r" }
 
 # NO BGP expect "midonet> " { send "router router0 port port0 add bgp local-AS ${BGP} peer-AS ${PEER} peer ${GW_IP}\r" }
 
