@@ -2,6 +2,15 @@
     run("""
 rm -vf /tmp/.chimata_lockfile__*
 
+</dev/null dpkg --configure -a
+
+</dev/null apt-get -f -y install
+
+apt-get -y --purge remove midolman </dev/null
+
+rm -rf /etc/midolman
+rm -rf /var/log/midolman
+
 apt-get -y --purge remove zookeeper </dev/null
 apt-get -y --purge remove cassandra </dev/null
 

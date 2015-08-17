@@ -24,6 +24,13 @@ apt-get remove --purge -y tomcat6; echo
     Puppet.apply('midonet::midonet_api', args, metadata)
 
     run("""
+
+cat >/etc/default/tomcat7 <<EOF
+TOMCAT7_USER=tomcat7
+TOMCAT7_GROUP=tomcat7
+JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC -Djava.net.preferIPv4Stack=true -Djava.security.egd=file:/dev/./urandom"
+EOF
+
 sed -i 's,org.midonet.api.auth.MockAuthService,org.midonet.cluster.auth.MockAuthService,g;' /usr/share/midonet-api/WEB-INF/web.xml
 
 rm -rfv /var/log/tomcat7/*

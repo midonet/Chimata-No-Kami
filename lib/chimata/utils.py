@@ -79,7 +79,7 @@ class Puppet(object):
             xargs = {}
 
             if "OS_MIDOKURA_REPOSITORY_USER" in os.environ:
-                xapt = 'http://%s:%s@apt.midokura.com' % (os.environ["OS_MIDOKURA_REPOSITORY_USER"], os.environ["OS_MIDOKURA_REPOSITORY_PASS"])
+                xapt = '[arch=amd64] http://%s:%s@apt.midokura.com' % (os.environ["OS_MIDOKURA_REPOSITORY_USER"], os.environ["OS_MIDOKURA_REPOSITORY_PASS"])
                 xargs['midonet_stage'] = "'trusty'"
                 xargs['openstack_release'] = "'kilo'"
                 xargs['midonet_repo'] = "'%s/midonet/v1.9/stable'" % xapt
@@ -106,7 +106,7 @@ VERBOSE="%s"
 NAMESERVER="%s"
 
 echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
-yes | dpkg --configure -a
+</dev/null dpkg --configure -a
 
 cat >/tmp/node.pp<<EOF
 node $(hostname) {

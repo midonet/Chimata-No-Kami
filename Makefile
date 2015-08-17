@@ -25,7 +25,7 @@ DEBUG = $(shell env | grep ^DEBUG)
 
 NODEPS = $(shell env | grep ^NODEPS)
 
-ALLTARGETS = $(PREREQUISITES) install zookeeper cassandra midonet_agents midonet_api midonet_manager midonet_cli tunnelzone bridge router midonet_gateways haproxy varnish applications
+ALLTARGETS = $(PREREQUISITES) install zookeeper cassandra midonet_api midonet_agents midonet_manager midonet_cli tunnelzone bridges routers midonet_gateways haproxy varnish applications
 
 all: $(ALLTARGETS)
 
@@ -82,15 +82,15 @@ tunnelzone:       $(PREREQUISITES) $(TUNNELZONE_DEPS)
 	$(RUNSTAGE)
 
 #
-# create a virtual bridge
+# create the virtual bridges
 #
-bridge:           $(PREREQUISITES) $(BRIDGE_DEPS)
+bridges:          $(PREREQUISITES) $(BRIDGE_DEPS)
 	$(RUNSTAGE)
 
 #
-# create a virtual router, attaches it to the bridge
+# create the virtual routers
 #
-router:           $(PREREQUISITES) $(ROUTER_DEPS)
+routers:          $(PREREQUISITES) $(ROUTER_DEPS)
 	$(RUNSTAGE)
 
 #

@@ -13,13 +13,13 @@ UNDERLAY_MTU="%s"
 
 echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
 
-yes | dpkg --configure -a
-yes | apt-get update 1>/dev/null
-yes | DEBIAN_FRONTEND=noninteractive apt-get -y -u dist-upgrade 1>/dev/null
+</dev/null dpkg --configure -a
+</dev/null apt-get update 1>/dev/null
+</dev/null DEBIAN_FRONTEND=noninteractive apt-get -y -u dist-upgrade 1>/dev/null
 
 for PKG in puppet htop vim screen atop tcpdump nload make git dstat bridge-utils openjdk-7-jre-headless iperf iperf3 traceroute mosh python minicom strace; do
     dpkg -l "${PKG}" | grep "ii  ${PKG}" || \
-        yes | DEBIAN_FRONTEND=noninteractive apt-get -q --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -- "${PKG}" || true
+        </dev/null DEBIAN_FRONTEND=noninteractive apt-get -q --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -- "${PKG}" || true
 done
 
 puppet module list 2>/dev/null | grep midonet-midonet || puppet module install midonet-midonet
@@ -59,7 +59,7 @@ exit 0
         metadata.config["nameserver"],
         metadata.config["domain"],
         env.host_string,
-        metadata.config["underlay_mtu"]
+        str(metadata.config["underlay_mtu"])
     ))
 
     #

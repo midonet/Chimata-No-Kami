@@ -104,15 +104,14 @@ class Config(object):
         defaults["nameserver"] = "8.8.8.8"
         defaults["parallel"] = True
 
-        defaults["underlay_mtu"] = 1500
-        defaults["overlay_mtu"] = 1450
+        defaults["underlay_mtu"] = 1450
+        defaults["overlay_mtu"] = 1400
 
         defaults['container_density'] = 4096
-        defaults['container_ip_offset'] = 10
 
-        defaults['basic_roles'] = ['all_servers', 'sshconfig', 'install']
+        defaults['basic_roles'] = ['install']
 
-        defaults['no_lock_check'] = ['prune', 'distclean', 'reboot', 'uptime']
+        defaults['no_lock_check'] = ['all_servers', 'sshconfig', 'prune', 'distclean', 'reboot', 'uptime']
 
         for role in defaults['no_lock_check']:
             defaults['basic_roles'].append(role)
@@ -137,7 +136,7 @@ class Config(object):
         #
         # midonet_cli server will create the tunnel-zone, bridge and router
         #
-        for role in ['tunnelzone', 'bridge', 'router']:
+        for role in ['tunnelzone', 'bridges', 'routers']:
             self.__check__add_empty_role(role)
 
             for server in sorted(self._servers):
@@ -179,7 +178,7 @@ class Config(object):
                         self._roles[role].append(server)
 
     #
-    # assigns the ip addresses from the containers based on idx of server and application
+    # "Microsegmentation, network virtualization and ghetto IPAM walk into a bar..."
     #
     def __prepare_applications(self):
         application_idx = 0
@@ -188,31 +187,39 @@ class Config(object):
             application_ip_offset = len(self._servers) * self._config['container_density'] * application_idx
             application_idx = application_idx + 1
 
+            server_idx = 0
             for server in sorted(self._applications[application]):
+                server_ip_offset = server_idx * self._config['container_density']
+                server_idx = server_idx + 1
+
                 self._servers[server]['applications'] = {}
                 self._servers[server]['applications'][application] = {}
 
-                #
-                # this is the ipv4 base network for this server
-                #
-                server_idx = int(re.sub(r"\D", "", server)) * self._config['container_density'] + self._config['container_ip_offset'] + application_ip_offset
-
+                container_idx = 0
                 for container in sorted(self._applications[application][server]):
-                    self._servers[server]['applications'][application][container] = {}
+                    container_ip_offset = container_idx * 4
+                    container_idx = container_idx + 1
 
                     #
-                    # this will be used to determine the ip address of the container
+                    # base network for this micro-segment
                     #
-                    container_idx = int(re.sub(r"\D", "", container)) + server_idx
+                    network_ip_offset = application_ip_offset + server_ip_offset + container_ip_offset
 
-                    #
-                    # This python CIDR class allows us to walk the ip namespace by array index
-                    #
-                    container_ip = CIDR(self._config['overlay'])[container_idx]
+                    gw_ip_offset = network_ip_offset + 1
 
-                    # puts(yellow("setting container ip %s for container %s, application %s on server %s" % (container_ip, container, application, server)))
+                    ip_offset = network_ip_offset + 2
 
-                    self._servers[server]['applications'][application][container]['ip'] = container_ip
+                    cproperties = {}
+
+                    cproperties["network"] = CIDR(self._config['overlay'])[network_ip_offset]
+                    cproperties["netmask"] = 30
+
+                    cproperties["gw"] = CIDR(self._config['overlay'])[gw_ip_offset]
+                    cproperties["ip"] = CIDR(self._config['overlay'])[ip_offset]
+
+                    cproperties["br"] = "%s_%s_%s" % (server, application, container)
+
+                    self._servers[server]['applications'][application][container] = cproperties
 
     def __prepare_servers(self):
         for role in self._roles:
