@@ -31,11 +31,16 @@ midonet-cli -e "router ${ROUTER_ID} port list" | grep "address ${ROUTER_IP} net 
 set timeout 10
 spawn midonet-cli
 expect "midonet> " { send "cleart\r" }
+
 expect "midonet> " { send "router list name router_edge\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${NETWORK}/24 type normal weight 10 port router0:port0\r" }
+
 expect "midonet> " { send "bridge list name ${BRIDGE}\r" }
 expect "midonet> " { send "bridge bridge0 port create\r" }
+
 expect "midonet> " { send "router router0 port port0 set peer bridge0:port0\r" }
+
 expect "midonet> " { send "quit\r" }
 EOF
 
@@ -94,6 +99,7 @@ expect "midonet> " { send "cleart\r" }
 
 expect "midonet> " { send "router list name ${ROUTER}\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${NETWORK}/24 type normal weight 10 port router0:port0\r" }
 expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst 0.0.0.0/0 type normal weight 100 port router0:port0 gw ${GW_IP}\r" }
 
 expect "midonet> " { send "bridge list name bridge_edge\r" }
@@ -134,9 +140,11 @@ DESTINATION_NETWORK="%s"
 set timeout 10
 spawn midonet-cli
 expect "midonet> " { send "cleart\r" }
+
 expect "midonet> " { send "router list name router_edge\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/24\r" }
-expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${DESTINATION_NETWORK}/30 type normal weight 100 port router0:port0 gw ${GW_IP}\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${DESTINATION_NETWORK}/30 type normal weight 10 port router0:port0 gw ${GW_IP}\r" }
+
 expect "midonet> " { send "quit\r" }
 EOF
 
@@ -193,7 +201,7 @@ midonet-cli -e "router ${ROUTER_ID} port list" | grep "address ${ROUTER_IP} net 
     midonet-cli -e "router ${ROUTER_ID} add port address ${ROUTER_IP} net ${NETWORK}/30"
 
 #
-# if the binding is there do not spam ports on the bridge
+# if the binding is there do not spam dangling vports on the bridge
 #
 midonet-cli -e "router ${ROUTER_ID} port list" | grep "address ${ROUTER_IP} net ${NETWORK}/30 peer bridge" && exit 0
 
@@ -201,12 +209,16 @@ midonet-cli -e "router ${ROUTER_ID} port list" | grep "address ${ROUTER_IP} net 
 set timeout 10
 spawn midonet-cli
 expect "midonet> " { send "cleart\r" }
+
 expect "midonet> " { send "router list name ${ROUTER}\r" }
 expect "midonet> " { send "router router0 port list address ${ROUTER_IP} net ${NETWORK}/30\r" }
-expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${NETWORK}/30 type normal weight 100 port router0:port0\r" }
+expect "midonet> " { send "router router0 add route src 0.0.0.0/0 dst ${NETWORK}/30 type normal weight 10 port router0:port0\r" }
+
 expect "midonet> " { send "bridge list name ${BRIDGE}\r" }
 expect "midonet> " { send "bridge bridge0 port create\r" }
+
 expect "midonet> " { send "router router0 port port0 set peer bridge0:port0\r" }
+
 expect "midonet> " { send "quit\r" }
 EOF
 

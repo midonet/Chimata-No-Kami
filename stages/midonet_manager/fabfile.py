@@ -2,8 +2,25 @@
     if "OS_MIDOKURA_REPOSITORY_USER" in os.environ:
         puts(green("installing MidoNet Manager on %s" % env.host_string))
 
+        if 'fip' in metadata.servers[metadata.roles['midonet_api'][0]]:
+            api_ip = metadata.servers[metadata.roles['midonet_api'][0]]['fip']
+        else:
+            api_ip = metadata.servers[metadata.roles['midonet_api'][0]]['ip']
+
         run("""
 API_IP="%s"
+
+USERNAME="%s"
+PASSWORD="%s"
+
+cat >/etc/apt/sources.list.d/midonet2.list <<EOF
+
+deb [arch=amd64] http://${USERNAME}:${PASSWORD}@apt.midokura.com/midonet/v1.9/stable trusty main non-free
+
+EOF
+
+apt-get update
+
 dpkg --configure -a
 apt-get install -y -u midonet-manager
 
@@ -25,9 +42,17 @@ cat >/var/www/html/midonet-manager/config/client.js <<EOF
 }
 EOF
 
+cp /var/www/html/midonet-manager/config/client.js /var/www/html/midonet-manager/config/.client.js
+
+cp /var/www/html/midonet-manager/config/client.js /root/client.js
+
 service apache2 restart
 
-""" % metadata.servers[metadata.roles['midonet_api'][0]]['ip'])
+""" % (
+        api_ip,
+        os.environ["OS_MIDOKURA_REPOSITORY_USER"],
+        os.environ["OS_MIDOKURA_REPOSITORY_PASS"]
+    ))
 
     else:
         puts(yellow("MidoNet Manager is only available in MEM"))

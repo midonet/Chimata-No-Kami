@@ -96,30 +96,25 @@ exit 1
 
 """)
 
-    #
-    # check if the host made it into zookeeper and is alive, perform cardio-pulmonary reuscitation a bit if its not alive but in zk
-    #
     run("""
 
 SERVER="%s"
 
-for i in $(seq 1 600); do
+for i in $(seq 1 20); do
 
-    midonet-cli -e 'host list' | grep "name ${SERVER} alive true" && exit 0
+    if [[ "" == "$(midonet-cli -e 'host list' | grep "name ${SERVER} alive true")" ]]; then
+        for i in $(seq 1 20); do
+            echo '. checking agent .'
 
-    midonet-cli -e 'host list' | grep "name ${SERVER} alive false" && \
-    ( \
-        service midolman restart; \
-        for i in $(seq 1 240); do \
-            echo '.performing CPR - please wait.'; \
-            midonet-cli -e 'host list' | grep "name ${SERVER} alive true" && exit 0; \
-            sleep 1; \
-        done \
-    )
+            midonet-cli -e 'host list' | grep "name ${SERVER} alive true" && exit 0
 
-    echo '.'
+            sleep 1
+        done
 
-    sleep 2
+        service midolman restart
+    else
+        exit 0
+    fi
 done
 
 echo

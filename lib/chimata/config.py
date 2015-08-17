@@ -100,6 +100,8 @@ class Config(object):
         #
         defaults["edge_network"] = "192.168.254.0/24"
 
+        defaults["varnish_edge_network"] = "192.168.253.0/24"
+
         #
         # at the moment we support random and round-robin in the script stages/varnish/fabfile.py
         #

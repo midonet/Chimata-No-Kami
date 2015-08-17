@@ -11,7 +11,11 @@
     args['zk_servers'] = "[%s]" % ",".join(zk)
     args['keystone_auth'] = "false"
     args['vtep'] = "true"
-    args['api_ip'] = "'%s'" % metadata.servers[env.host_string]['ip']
+
+    if 'fip' in metadata.servers[env.host_string]:
+        args['api_ip'] = "'%s'" % metadata.servers[env.host_string]['fip']
+    else:
+        args['api_ip'] = "'%s'" % metadata.servers[env.host_string]['ip']
 
     run("""
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6

@@ -16,6 +16,7 @@ apt-get -y --purge remove cassandra </dev/null
 
 service zookeeper stop
 service cassandra stop
+service quagga stop
 
 rm -rf /etc/cassandra
 rm -rf /etc/zookeeper
