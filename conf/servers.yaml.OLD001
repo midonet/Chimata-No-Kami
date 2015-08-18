@@ -1,12 +1,9 @@
 config:
 
-    underlay_mtu: 1500
-    overlay_mtu: 1450
-
     verbose: True
     debug: False
 
-    domain: chimata.midokura.de
+    domain: Chimata-No-Kami.midokura.de
 
     #
     # used for the ips of the containers in midonet overlay
@@ -21,24 +18,30 @@ config:
 roles:
     zookeeper:
     - s001
+    - s002
+    - s003
 
     cassandra:
     - s001
+    - s002
+    - s003
 
     midonet_api:
     - s001
 
     midonet_manager:
-    - s001
+    - s002
 
     midonet_cli:
-    - s001
+    - s003
 
     haproxy:
-    - s002
+    - s004
+    - s005
 
     varnish:
-    - s002
+    - s006
+    - s007
 
 #
 # this will be nginx containers running in the servers
@@ -48,17 +51,46 @@ roles:
 #
 applications:
     nginx:
-        s003:
+        s008:
+        - c001
+        - c002
+        - c003
+        - c004
+
+        s009:
         - c001
         - c002
         - c003
         - c004
 
 servers:
+
     s001:
-        ip: 188.166.81.155
+        ip: 192.168.77.36
+        fip: 119.15.125.247
+
     s002:
-        ip: 188.166.83.126
+        ip: 192.168.77.37
+        fip: 119.15.125.254
+
     s003:
-        ip: 128.199.42.176
+        ip: 192.168.77.38
+
+    s004:
+        ip: 192.168.77.39
+
+    s005:
+        ip: 192.168.77.40
+
+    s006:
+        ip: 192.168.77.41
+
+    s007:
+        ip: 192.168.77.42
+
+    s008:
+        ip: 192.168.77.43
+
+    s009:
+        ip: 192.168.77.44
 
